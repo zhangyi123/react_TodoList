@@ -3,7 +3,23 @@ import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 //import './index.css';
 
-
+// function Item(props){
+//     var item;
+//     var array = props.item;
+//     var item = array.reduce((item, array) => {
+//        if(array.done==props.done)item.push(array.name);
+//        return item;
+//     }, []);
+//     var ItemFiltered = item.map((i,index) =>
+//     <div key={index}>
+//      <li>{i}
+//          <button onClick={() => this.handleClick(item, done=true)}>done</button>
+//          // <button onClick={() => this.handleDelete(item)}>remove</button>
+//      </li>
+//     </div>
+//   );
+//     return ItemFiltered;
+// }
 class Todo extends React.Component {
   constructor(props) {
     super(props);
@@ -13,6 +29,23 @@ class Todo extends React.Component {
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  RenderItem(d, i) {
+    var array = i;
+    var each = array.reduce((each, array) => {
+       if(array.done==d)each.push(array.name);
+       return each;
+    }, []);
+    var ItemFiltered = each.map((i,index) =>
+    <div key={index}>
+     <li>
+          {i}
+          <button onClick={() => this.handleClick(i, !d)}>done</button>
+          <button onClick={() => this.handleDelete(i)}>remove</button>
+     </li>
+    </div>
+  );
+    return ItemFiltered;
   }
   handleChange(event) {
     this.setState({value: event.target.value.toUpperCase()});
@@ -29,8 +62,7 @@ class Todo extends React.Component {
     var tmp = [...this.state.arry];
     for(var i=0; i<tmp.length;i++){
       if(tmp[i].name == item){
-        if(done == true)tmp[i].done=true; //this can be revised
-        else tmp[i].done=false;
+        tmp[i].done=done;
         break;
       }
     }
@@ -47,32 +79,7 @@ class Todo extends React.Component {
     this.setState({arry: tmp});
   }
   render(){
-     var temp = this.state.arry; //this is must, cannot directly put it into callback reduce below
-     var item_todo = temp.reduce((item_todo, temp) => {
-        if(temp.done==false)item_todo.push(temp.name); //cause a warning
-        return item_todo;
-     }, []);
-     var item_done = temp.reduce((item_done, temp) => {
-        if(temp.done==true)item_done.push(temp.name); //cause a warning
-        return item_done;
-     }, []);;
-     var ItemTodo = item_todo.map((item,index,done) =>
-     <div key={index}>
-      <li>{item}
-          <button onClick={() => this.handleClick(item, done=true)}>done</button>
-          <button onClick={() => this.handleDelete(item)}>remove</button>
-      </li>
-     </div>
-   );
-     var ItemDone = item_done.map((item,index,done) =>
-     <div key={index}>
-      <li>{item}
-          <button onClick={() => this.handleClick(item, done=false)}>Undone</button>
-          <button onClick={() => this.handleDelete(item)}>remove</button>
-      </li>
-     </div>
- );
-
+    var temp = this.state.arry; //this is must, cannot directly put it into callback reduce below
     return (
       <div>
       <h1>My TodoList</h1>
@@ -81,9 +88,9 @@ class Todo extends React.Component {
        onChange={this.handleChange}   />
       <input type="submit" value= "Add" />
       </form>
-      <ul>{ItemTodo}</ul>
+      <ul>{this.RenderItem(false, temp)}</ul>
       <h2>Finished</h2>
-      <ul>{ItemDone}</ul>
+      <ul>{this.RenderItem(true, temp)}</ul>
       </div>
     );
   }
