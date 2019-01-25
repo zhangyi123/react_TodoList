@@ -2,24 +2,40 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 //import './index.css';
-
-// function Item(props){
-//     var item;
-//     var array = props.item;
-//     var item = array.reduce((item, array) => {
-//        if(array.done==props.done)item.push(array.name);
-//        return item;
-//     }, []);
-//     var ItemFiltered = item.map((i,index) =>
-//     <div key={index}>
-//      <li>{i}
-//          <button onClick={() => this.handleClick(item, done=true)}>done</button>
-//          // <button onClick={() => this.handleDelete(item)}>remove</button>
-//      </li>
-//     </div>
-//   );
-//     return ItemFiltered;
-// }
+class Item extends React.Component {
+  // constructor(props) { useless constructor warning
+  //   super(props);
+  // }
+  render() {
+    return (
+      <li>
+           {this.props.it}
+           <button onClick={this.props.action}>done</button>
+           <button onClick={this.props.del}>remove</button>
+      </li>
+    );
+  }
+}
+class Board extends React.Component {
+  // constructor(props) {
+  //   super(props);
+  // }
+  render() {
+    //inclass "this" is necessary for props, in function it is fine
+    //render() the parenthesis are necessary, without it, it will be a function reference, not react element
+    //which can be rendered. no same as
+    // <button className="square"
+    //   onClick={props.onClick}   >
+    //     {props.value}
+    //   </button>
+    return (
+      <div>
+      <h2>{this.props.title}</h2>
+      <ul>{this.props.render()}</ul>
+      </div>
+    )
+  }
+}
 class Todo extends React.Component {
   constructor(props) {
     super(props);
@@ -37,13 +53,7 @@ class Todo extends React.Component {
        return each;
     }, []);
     var ItemFiltered = each.map((i,index) =>
-    <div key={index}>
-     <li>
-          {i}
-          <button onClick={() => this.handleClick(i, !d)}>done</button>
-          <button onClick={() => this.handleDelete(i)}>remove</button>
-     </li>
-    </div>
+    <Item key={index} it={i} action={() => this.handleClick(i, !d)} del={() => this.handleDelete(i)} />
   );
     return ItemFiltered;
   }
@@ -79,23 +89,19 @@ class Todo extends React.Component {
     this.setState({arry: tmp});
   }
   render(){
-    var temp = this.state.arry; //this is must, cannot directly put it into callback reduce below
+    var temp = this.state.arry;
     return (
       <div>
       <h1>My TodoList</h1>
       <form onSubmit={this.handleSubmit}>
-      <input type="text" value={this.state.value}
-       onChange={this.handleChange}   />
-      <input type="submit" value= "Add" />
+        <input type="text" value={this.state.value}
+          onChange={this.handleChange}   />
+        <input type="submit" value= "Add" />
       </form>
-      <ul>{this.RenderItem(false, temp)}</ul>
-      <h2>Finished</h2>
-      <ul>{this.RenderItem(true, temp)}</ul>
+      <Board title="Todo:" render={() => this.RenderItem(false, temp)}/>
+      <Board title="Finished:" render={() => this.RenderItem(true, temp)}/>
       </div>
     );
   }
 }
-
-
-
 ReactDOM.render(<Todo />, document.getElementById('root'));
